@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Liste des clients
+{% endblock %}
+
+{% block body %}
+    <h1>Liste des clients</h1>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Nom du client</th>
+                <th>Prénom du contact</th>
+                <th>Nom du contact</th>
+                <th>Numéro de téléphone</th>
+                <th>Pays</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for customer in customers %}
+                <tr>
+                    <td>
+                        <a href="{{ path('app_customers_show', {id: customer.customerNumber}) }}">
+                            {{ customer.customerName }}
+                        </a>
+                    </td>
+                    <td>{{ customer.contactFirstName }}</td>
+                    <td>{{ customer.contactLastName }}</td>
+                    <td>{{ customer.phone }}</td>
+                    <td>{{ customer.country }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

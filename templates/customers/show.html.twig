@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    Détail du client {{ customer.customerName }}
+{% endblock %}
+
+{% block body %}
+    <article>
+        <h1>Détail du client {{ customer.customerName }}</h1>
+
+        <dl>
+            <dt>Nom du client</dt>
+            <dd>{{ customer.customerName }}</dd>
+            <dt>Nom du contact</dt>
+            <dd>{{ customer.contactFirstName }} {{ customer.contactLastName }}</dd>
+            <dt>Téléphone</dt>
+            <dd>{{ customer.phone }}</dd>
+            <dt>Adresse</dt>
+            <dd>{{ customer.addressLine1 }} {{ customer.postalCode }} {{ customer.city }}, {{ customer.country }}</dd>
+        </dl>
+    </article>
+{% endblock %}
