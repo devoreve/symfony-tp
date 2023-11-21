@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des articles{% endblock %}
+
+{% block body %}
+    <h1>Liste des articles</h1>
+
+    <nav>
+        <a href="{{ path('app_post_create') }}" class="btn btn-primary">Créer un nouvel article</a>
+    </nav>
+
+    <ul class="list-unstyled">
+        {% for post in posts %}
+            <li>
+                <article>
+                    <header>
+                        <h2>{{ post.title }}</h2>
+                        <p>Créé le {{ post.createdAt|date('d/m/Y H:i') }}</p>
+                    </header>
+                    {{ post.content }}
+                </article>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}
