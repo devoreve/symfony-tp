@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    post.title
+{% endblock %}
+
+{% block body %}
+    <article>
+        <header class="border-bottom my-3">
+            <h1>{{ post.title }}</h1>
+            <p>{{ post.createdAt|date('d/m/Y H:i') }}</p>
+        </header>
+        {{ post.content|nl2br }}
+    </article>
+
+    <section>
+        <h2>Espace commentaire</h2>
+
+        <form method="post">
+            <fieldset class="form-group">
+                <label for="nickname">Pseudo</label>
+                <input type="text" class="form-control" name="nickname" id="nickname">
+            </fieldset>
+            <fieldset class="form-group">
+                <label for="content">Commentaire</label>
+                <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
+            </fieldset>
+            <fieldset class="my-3">
+                <button class="btn btn-primary">Ajouter</button>
+            </fieldset>
+        </form>
+
+        <ul class="list-unstyled">
+            {% for comment in comments %}
+                <li>
+                    <article>
+                        <h3>{{ comment.nickname }}</h3>
+                        {{ comment.content|nl2br }}
+                    </article>
+                </li>
+            {% endfor %}
+        </ul>
+    </section>
+{% endblock %}
