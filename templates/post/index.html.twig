@@ -17,7 +17,7 @@
                         <h2><a href="{{ path('app_post_show', {id: post.id}) }}">{{ post.title }}</a></h2>
                         <p>Créé le {{ post.createdAt|date('d/m/Y H:i') }}</p>
                     </header>
-                    {{ post.content }}
+                    {{ post.content|slice(0, 200) }}...(<a href="{{ path('app_post_show', {id: post.id}) }}">Voir la suite</a>)
                 </article>
             </li>
         {% endfor %}
