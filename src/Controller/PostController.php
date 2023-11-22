@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Post;
+use App\Form\CommentType;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -48,7 +49,12 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/post/{id}', name: 'app_post_show')]
-    public function show(int $id, PostRepository $postRepository, EntityManagerInterface $entityManager, CommentRepository $commentRepository): Response
+    public function show(
+        int $id, PostRepository $postRepository,
+        EntityManagerInterface $entityManager,
+        CommentRepository $commentRepository,
+        Request $request
+    ): Response
     {
         $post = $postRepository->find($id);
 
@@ -57,15 +63,19 @@ class PostController extends AbstractController
             throw $this->createNotFoundException("L'article demandé n'existe pas");
         }
 
-        $request = Request::createFromGlobals();
+        // Création d'un commentaire vide
+        $comment = new Comment();
 
-        if ($request->getMethod() === 'POST') {
-            // Ajout du commentaire rattaché à l'article
-            $comment = new Comment();
-            $comment->setNickname($request->request->get('nickname'))
-                ->setContent($request->request->get('content'))
-                ->setPost($post);
+        // Création du formulaire pour les commentaires avec l'entité liée
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
 
+        if ($form->isSubmitted() && $form->isValid()) {
+            // L'entité commentaire a été mise à jour avec les données du formulaire
+            // Je rattache le commentaire à l'article
+            $comment->setPost($post);
+
+            // Mise à jour de la base de données
             $entityManager->persist($comment);
             $entityManager->flush();
 
@@ -79,7 +89,8 @@ class PostController extends AbstractController
         // Affichage du détail de l'article et des commentaires
         return $this->render('post/show.html.twig', [
             'post' => $post,
-            'comments' => $comments
+            'comments' => $comments,
+            'form' => $form
         ]);
     }
 }

@@ -16,19 +16,7 @@
     <section>
         <h2>Espace commentaire</h2>
 
-        <form method="post">
-            <fieldset class="form-group">
-                <label for="nickname">Pseudo</label>
-                <input type="text" class="form-control" name="nickname" id="nickname">
-            </fieldset>
-            <fieldset class="form-group">
-                <label for="content">Commentaire</label>
-                <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
-            </fieldset>
-            <fieldset class="my-3">
-                <button class="btn btn-primary">Ajouter</button>
-            </fieldset>
-        </form>
+        {{ form(form) }}
 
         <ul class="list-unstyled">
             {% for comment in comments %}
