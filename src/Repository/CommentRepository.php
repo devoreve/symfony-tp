@@ -24,9 +24,11 @@ class CommentRepository extends ServiceEntityRepository
     /**
      * @return Comment[]
      */
-    public function findOldest(): array
+    public function findOldest(int $postId): array
     {
         return $this->createQueryBuilder('c')
+            ->where('c.post = :postId')
+            ->setParameter('postId', $postId)
             ->orderBy('c.createdAt')
             ->getQuery()
             ->getResult();

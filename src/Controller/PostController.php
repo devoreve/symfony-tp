@@ -60,10 +60,11 @@ class PostController extends AbstractController
         $request = Request::createFromGlobals();
 
         if ($request->getMethod() === 'POST') {
-            // Ajout du commentaire
+            // Ajout du commentaire rattaché à l'article
             $comment = new Comment();
             $comment->setNickname($request->request->get('nickname'))
-                ->setContent($request->request->get('content'));
+                ->setContent($request->request->get('content'))
+                ->setPost($post);
 
             $entityManager->persist($comment);
             $entityManager->flush();
@@ -72,8 +73,8 @@ class PostController extends AbstractController
             return $this->redirectToRoute('app_post_show', ['id' => $id]);
         }
 
-        // Récupération de tous les commentaires
-        $comments = $commentRepository->findOldest();
+        // Récupération de tous les commentaires de l'article
+        $comments = $commentRepository->findOldest($post->getId());
 
         // Affichage du détail de l'article et des commentaires
         return $this->render('post/show.html.twig', [
