@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
+use App\Form\PostType;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,33 +28,33 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/post/create', name: 'app_post_create')]
-    public function create(EntityManagerInterface $entityManager): Response
+    public function create(EntityManagerInterface $entityManager, Request $request): Response
     {
-        $request = Request::createFromGlobals();
+        $post = new Post();
+        $form = $this->createForm(PostType::class, $post);
 
-        // Si on est en GET on affiche le formulaire
-        if ($request->getMethod() === 'GET') {
-            return $this->render('post/create.html.twig');
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Sauvegarde de l'article en base de données
+            $entityManager->persist($post);
+            $entityManager->flush();
+
+            // Redirection vers la liste des articles
+            return $this->redirectToRoute('app_post_index');
         }
 
-        // Créer un article grâce à notre entité Post
-        $post = new Post();
-        $post->setTitle($request->request->get('title'))
-            ->setContent($request->request->get('content'));
-
-        $entityManager->persist($post);
-        $entityManager->flush();
-
-        // Redirection vers la liste des articles
-        return $this->redirectToRoute('app_post_index');
+        return $this->render('post/create.html.twig', [
+            'form' => $form
+        ]);
     }
 
     #[Route(path: '/post/{id}', name: 'app_post_show')]
     public function show(
-        int $id, PostRepository $postRepository,
+        int                    $id, PostRepository $postRepository,
         EntityManagerInterface $entityManager,
-        CommentRepository $commentRepository,
-        Request $request
+        CommentRepository      $commentRepository,
+        Request                $request
     ): Response
     {
         $post = $postRepository->find($id);

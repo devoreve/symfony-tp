@@ -7,17 +7,5 @@
 {% block body %}
     <h1>Ajouter un article</h1>
 
-    <form method="post">
-        <fieldset class="form-group">
-            <label for="title">Titre</label>
-            <input type="text" name="title" id="title" class="form-control">
-        </fieldset>
-        <fieldset>
-            <label for="content">Contenu</label>
-            <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
-        </fieldset>
-        <fieldset class="my-2">
-            <button class="btn btn-primary">Envoyer</button>
-        </fieldset>
-    </form>
+    {{ form(form) }}
 {% endblock %}
