@@ -28,6 +28,10 @@ class Post
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
+    #[ORM\ManyToOne(inversedBy: 'posts')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Category $category = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -101,6 +105,18 @@ class Post
                 $comment->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getCategory(): ?Category
+    {
+        return $this->category;
+    }
+
+    public function setCategory(?Category $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

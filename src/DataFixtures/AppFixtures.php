@@ -2,6 +2,7 @@
 
 namespace App\DataFixtures;
 
+use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Post;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -20,8 +21,13 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
+        $categories = $this->loadCategories($manager);
+
         for ($i = 1; $i <= 100; $i++) {
             $post = $this->createPost();
+
+            // On donne une catégorie au hasard dans la liste des catégories à l'article
+            $post->setCategory($categories[array_rand($categories)]);
 
             for ($j = 1; $j <= 3; $j++) {
                 $comment = $this->createComment($post);
@@ -32,6 +38,29 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return Category[]
+     */
+    public function loadCategories(ObjectManager $manager): array
+    {
+        // Liste des titres de catégories
+        $categories = [
+            'Voyage',
+            'Cinéma',
+            'Musique',
+            'Cuisine',
+            'Voiture'
+        ];
+
+        // Tableau qui contient des instances de catégories
+        return array_map(function ($categoryName) use ($manager) {
+            $category = $this->createCategory($categoryName);
+            $manager->persist($category);
+            return $category;
+        }, $categories);
     }
 
     public function createPost(): Post
@@ -51,5 +80,12 @@ class AppFixtures extends Fixture
             ->setPost($post);
 
         return $comment;
+    }
+
+    public function createCategory(string $categoryName): Category
+    {
+        $category = new Category();
+        $category->setName($categoryName);
+        return $category;
     }
 }
