@@ -5,19 +5,21 @@
 {% endblock %}
 
 {% block body %}
-    <h1>Ajouter un article</h1>
+    {% if post.id %}
+        <h1>Modifier un article</h1>
+    {% else %}
+        <h1>Ajouter un article</h1>
+    {% endif %}
 
-    <form method="post">
-        <fieldset class="form-group">
-            <label for="title">Titre</label>
-            <input type="text" name="title" id="title" class="form-control">
-        </fieldset>
-        <fieldset>
-            <label for="content">Contenu</label>
-            <textarea name="content" id="content" cols="30" rows="10" class="form-control"></textarea>
-        </fieldset>
-        <fieldset class="my-2">
-            <button class="btn btn-primary">Envoyer</button>
-        </fieldset>
-    </form>
+    {{ form_start(form) }}
+        {{ form_row(form.title) }}
+        {{ form_row(form.content) }}
+        {{ form_row(form.category) }}
+
+        {% if post.id %}
+            {{ form_row(form.submit, {label: "Mettre à jour l'article"}) }}
+        {% else %}
+            {{ form_row(form.submit, {label: "Créer l'article"}) }}
+        {% endif %}
+    {{ form_end(form) }}
 {% endblock %}

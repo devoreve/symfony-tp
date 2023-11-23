@@ -6,9 +6,13 @@
 
 {% block body %}
     <article>
+        <nav>
+            <a class="btn btn-primary float-end" href="{{ path('app_post_edit', {id: post.id}) }}">Modifier</a>
+        </nav>
         <header class="border-bottom my-3">
             <h1>{{ post.title }}</h1>
             <p>{{ post.createdAt|date('d/m/Y H:i') }}</p>
+            <p>Catégorie : {{ post.category.name }}</p>
         </header>
         {{ post.content|nl2br }}
     </article>

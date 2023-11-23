@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Form\CommentType;
+use App\Form\PostType;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -27,42 +28,50 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/post/create', name: 'app_post_create')]
-    public function create(EntityManagerInterface $entityManager): Response
+    public function create(EntityManagerInterface $manager, Request $request): Response
     {
-        $request = Request::createFromGlobals();
+        $post = new Post();
+        return $this->save($post, $request, $manager);
+    }
 
-        // Si on est en GET on affiche le formulaire
-        if ($request->getMethod() === 'GET') {
-            return $this->render('post/create.html.twig');
+    #[Route(path: '/post/{id}/edit', name: 'app_post_edit')]
+    public function edit(Post $post, Request $request, EntityManagerInterface $manager): Response
+    {
+        return $this->save($post, $request, $manager);
+    }
+
+    /**
+     * @param Post $post
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    private function save(Post $post, Request $request, EntityManagerInterface $manager): Response
+    {
+        $form = $this->createForm(PostType::class, $post);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $manager->persist($post);
+            $manager->flush();
+
+            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
         }
 
-        // Créer un article grâce à notre entité Post
-        $post = new Post();
-        $post->setTitle($request->request->get('title'))
-            ->setContent($request->request->get('content'));
-
-        $entityManager->persist($post);
-        $entityManager->flush();
-
-        // Redirection vers la liste des articles
-        return $this->redirectToRoute('app_post_index');
+        return $this->render('post/create.html.twig', [
+            'form' => $form,
+            'post' => $post
+        ]);
     }
 
     #[Route(path: '/post/{id}', name: 'app_post_show')]
     public function show(
-        int $id, PostRepository $postRepository,
-        EntityManagerInterface $entityManager,
-        CommentRepository $commentRepository,
-        Request $request
+        Post                   $post,
+        EntityManagerInterface $manager,
+        CommentRepository      $commentRepository,
+        Request                $request
     ): Response
     {
-        $post = $postRepository->find($id);
-
-        // On déclenche une exception si l'article n'existe pas
-        if ($post === null) {
-            throw $this->createNotFoundException("L'article demandé n'existe pas");
-        }
-
         // Création d'un commentaire vide
         $comment = new Comment();
 
@@ -76,8 +85,8 @@ class PostController extends AbstractController
             $comment->setPost($post);
 
             // Mise à jour de la base de données
-            $entityManager->persist($comment);
-            $entityManager->flush();
+            $manager->persist($comment);
+            $manager->flush();
 
             // Redirection sur la page qui affiche le détail de l'article et les commentaires
             return $this->redirectToRoute('app_post_show', ['id' => $id]);
