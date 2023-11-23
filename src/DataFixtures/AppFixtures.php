@@ -52,7 +52,14 @@ class AppFixtures extends Fixture
             'Cinéma',
             'Musique',
             'Cuisine',
-            'Voiture'
+            'Voiture',
+            'Divers',
+            'Programmation',
+            'Loisir',
+            'Sport',
+            'Immobilier',
+            'Série TV',
+            'Livre/Mangas'
         ];
 
         // Tableau qui contient des instances de catégories

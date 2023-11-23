@@ -28,42 +28,50 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/post/create', name: 'app_post_create')]
-    public function create(EntityManagerInterface $entityManager, Request $request): Response
+    public function create(EntityManagerInterface $manager, Request $request): Response
     {
         $post = new Post();
-        $form = $this->createForm(PostType::class, $post);
+        return $this->save($post, $request, $manager);
+    }
 
+    #[Route(path: '/post/{id}/edit', name: 'app_post_edit')]
+    public function edit(Post $post, Request $request, EntityManagerInterface $manager): Response
+    {
+        return $this->save($post, $request, $manager);
+    }
+
+    /**
+     * @param Post $post
+     * @param Request $request
+     * @param EntityManagerInterface $manager
+     * @return Response
+     */
+    private function save(Post $post, Request $request, EntityManagerInterface $manager): Response
+    {
+        $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Sauvegarde de l'article en base de données
-            $entityManager->persist($post);
-            $entityManager->flush();
+            $manager->persist($post);
+            $manager->flush();
 
-            // Redirection vers la liste des articles
-            return $this->redirectToRoute('app_post_index');
+            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
         }
 
         return $this->render('post/create.html.twig', [
-            'form' => $form
+            'form' => $form,
+            'post' => $post
         ]);
     }
 
     #[Route(path: '/post/{id}', name: 'app_post_show')]
     public function show(
-        int                    $id, PostRepository $postRepository,
-        EntityManagerInterface $entityManager,
+        Post                   $post,
+        EntityManagerInterface $manager,
         CommentRepository      $commentRepository,
         Request                $request
     ): Response
     {
-        $post = $postRepository->find($id);
-
-        // On déclenche une exception si l'article n'existe pas
-        if ($post === null) {
-            throw $this->createNotFoundException("L'article demandé n'existe pas");
-        }
-
         // Création d'un commentaire vide
         $comment = new Comment();
 
@@ -77,8 +85,8 @@ class PostController extends AbstractController
             $comment->setPost($post);
 
             // Mise à jour de la base de données
-            $entityManager->persist($comment);
-            $entityManager->flush();
+            $manager->persist($comment);
+            $manager->flush();
 
             // Redirection sur la page qui affiche le détail de l'article et les commentaires
             return $this->redirectToRoute('app_post_show', ['id' => $id]);
