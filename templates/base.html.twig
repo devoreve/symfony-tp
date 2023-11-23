@@ -32,6 +32,9 @@
                 </div>
             </nav>
         </header>
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <p>Email: {{ app.user.email }}</p>
+        {% endif %}
         <main class="container my-3">
             {% block body %}{% endblock %}
         </main>
