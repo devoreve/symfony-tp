@@ -13,6 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class PostController extends AbstractController
 {
@@ -48,10 +49,22 @@ class PostController extends AbstractController
      */
     private function save(Post $post, Request $request, EntityManagerInterface $manager): Response
     {
+        // Si l'utilisateur n'est pas connecté, on lui interdit l'accès
+        $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
+
+        // Si l'utilisateur n'est pas l'auteur de l'article
+        if ($post->getId() !== null && $post->getUser() !== $this->getUser()) {
+            throw new AccessDeniedException("Cet article n'est pas le vôtre");
+        }
+
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // On rattache l'utilisateur connecté à l'article créé
+            $post->setUser($this->getUser());
+
+            // Ajout/Modification dans la base de données
             $manager->persist($post);
             $manager->flush();
 
