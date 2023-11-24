@@ -53,10 +53,8 @@ class PostController extends AbstractController
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
 
         // Si l'utilisateur n'est pas l'auteur de l'article
-        if ($post->getId() !== null) {
-            if ($post->getUser() !== $this->getUser()) {
-                throw new AccessDeniedException("Cet article n'est pas le vôtre");
-            }
+        if ($post->getId() !== null && $post->getUser() !== $this->getUser()) {
+            throw new AccessDeniedException("Cet article n'est pas le vôtre");
         }
 
         $form = $this->createForm(PostType::class, $post);
