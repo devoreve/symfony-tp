@@ -4,23 +4,21 @@ namespace App\DataFixtures;
 
 use App\Entity\Comment;
 use App\Entity\Post;
-use App\Entity\User;
 use App\Factory\CategoryFactory;
+use App\Factory\CommentFactory;
 use App\Factory\PostFactory;
 use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Factory;
 use Faker\Generator;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
     private Generator $faker;
 
-    public function __construct(private UserPasswordHasherInterface $userPasswordHasher)
+    public function __construct()
     {
-
         $this->faker = Factory::create();
     }
 
@@ -46,23 +44,31 @@ class AppFixtures extends Fixture
             'Livre/Mangas'
         ];
 
+        // Catégories
         CategoryFactory::createMany(count($categories), static function (int $i) use ($categories) {
             return ['name' => $categories[$i - 1]];
         });
 
+
+        // Utilisateurs
+        UserFactory::createMany(10);
+
+        // Articles avec commentaires
+        PostFactory::createMany(100, ['comments' => CommentFactory::new()->many(2, 3)]);
+
+        // Création de l'utilisateur admin
         $user = UserFactory::createOne([
             'email' => 'admin@symfoblog.dev',
             'name' => 'admin',
             'password' => 'adminadmin'
         ]);
 
-        UserFactory::createMany(10);
-
+        // Création des articles de l'adminstrateur
         PostFactory::createMany(10, [
-            'user' => $user
+            'user' => $user,
+            'comments' => CommentFactory::new()->many(1)
         ]);
 
-        PostFactory::createMany(100);
     }
 
     public function createComment(Post $post): Comment
