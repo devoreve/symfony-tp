@@ -140,6 +140,74 @@ public function index(PostRepository $postRepository): Response
 }
 ```
 
+#### Relations
+
+* oneToOne
+* oneToMany (et manyToOne)
+* manyToMany
+
+##### Relation oneToMany
+
+Cardinalité : 1 -> n
+
+**Exemple : les articles et les commentaires**
+
+* Un article peut avoir 0 ou plusieurs commentaires (n commentaires)
+* Un commentaire est attribué/affecté à un seul article
+
+Conséquence dans la base de données : un champ *post_id* est créé dans la table *comment*.
+
+**Exemple 2 : les catégories et les articles**
+
+* Une catégorie peut se retrouver sur 0 ou plusieurs articles (n articles)
+* Une catégorie est attribuée à un seul article
+
+Conséquence dans la base de données : un champ *category_id* est créé dans la table *post*.
+
+Les clés étrangères (*post_id*, *category_id*) sont gérées par doctrine lorsque l'on met en place la relation. Doctrine s'occupe de créer les champs nécessaires.
+
+##### Relation manyToMany
+
+Cardinalité : n -> n
+
+**Exemple : les catégories et les articles**
+
+On pourrait également concevoir notre base de données avec cette relation là pour les catégories :
+* Une catégorie peut se retrouve sur 0 ou plusieurs articles (n articles)
+* Un article peut avoir 1 ou plusieurs catégories (n catégories)
+
+Conséquence dans la base de données : création d'une table intermédiaire (table pivot) qui va contenir le numéro de l'article et le numéro de la catégorie. Doctrine s'occupe de gérer la création de cette table intermédiaire.
+
+*post (id, title...)*
+*category_post (category_id, post_id)*
+*category (id, name)*
+
+**Exemple 2 : les détails de commande pour un site e-commerce**
+
+Dans un site e-commerce, on retrouve souvent les tables *product* et *order*. Entre nos 2 tables il existe une relation manyToMany :
+* un produit peut se retrouver dans plusieurs commandes (n commandes)
+* une commande peut contenir 1 ou plusieurs produits (n produits)
+
+Conséquence dans la base de données : création d'une table intermédiaire (souvent appelée orderDetail ou orderLine) avec l'id du produit et l'id de la commande.
+
+Détail de commande :
+id commande : 1| id produit : 1 | quantité : 6 | nom produit : Banane
+id commande : 1| id produit : 2 | quantité : 2 | nom produit : Jus de fruit
+id commande : 1| id produit : 3 | quantité : 3 | nom produit : Bouteilles d'eau
+
+Au niveau de la base de données, on rajoute simplement ce champ dans la table intermédiaire. Mais comment l'ORM le gère ?
+
+* avec Eloquent (Laravel), le champ est géré directement sur cette table intermédiaire (pivot)
+* avec Doctrine (Symfony), il va falloir créer une entité supplémentaire (par exemple OrderDetail) dans ce cas spécifique (relation manyToMany avec un champ supplémentaire) et remplacer la relation manyToMany par 2 relations manyToOne vers cette entité créée
+
+Relation oneToMany entre la commande et les détails de commande :
+* une commande peut avoir 1 ou plusieurs détail de commande (n détails de commande)
+* un détail de commande fait référence à une seule commande
+
+Relation oneToMany entre les produits et les détails de commande :
+* un produit peut se retrouver dans 0 ou plusieurs détails de commande (n détails de commande)
+* un détail de commande fait référence à un seul produit
+
 #### Fixtures
 
 [Documentation](https://symfony.com/bundles/DoctrineFixturesBundle/current/index.html)
@@ -199,6 +267,18 @@ public function load(ObjectManager $manager): void
     $manager->flush();
 }
 ```
+
+##### Utilisation du bundle foundry
+
+Foundry est un bundle (une extension) de Symfony qui va permettre de gérer plus facilement les fixtures, en créant des "factory" pour nos entités.
+
+* Installation ``` composer require zenstruck/foundry --dev```
+* Créer les factory ``` php bin/console make:factory```
+* Utiliser une factory pour créer des données dans la base de données
+```php
+PostFactory::createMany(100);
+```
+* Relancer les fixtures
 
 ### Formulaires
 
