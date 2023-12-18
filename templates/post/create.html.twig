@@ -15,6 +15,7 @@
         {{ form_row(form.title) }}
         {{ form_row(form.content) }}
         {{ form_row(form.category) }}
+        {{ form_row(form.tags) }}
 
         {% if post.id %}
             {{ form_row(form.submit, {label: "Mettre à jour l'article"}) }}
