@@ -39,11 +39,15 @@ class Post
     #[ORM\ManyToMany(targetEntity: Tag::class, mappedBy: 'posts')]
     private Collection $tags;
 
+    #[ORM\OneToMany(mappedBy: 'post', targetEntity: FavoritePost::class, orphanRemoval: true)]
+    private Collection $favoritePosts;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
+        $this->favoritePosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -163,6 +167,36 @@ class Post
     {
         if ($this->tags->removeElement($tag)) {
             $tag->removePost($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, FavoritePost>
+     */
+    public function getFavoritePosts(): Collection
+    {
+        return $this->favoritePosts;
+    }
+
+    public function addFavoritePost(FavoritePost $favoritePost): static
+    {
+        if (!$this->favoritePosts->contains($favoritePost)) {
+            $this->favoritePosts->add($favoritePost);
+            $favoritePost->setPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoritePost(FavoritePost $favoritePost): static
+    {
+        if ($this->favoritePosts->removeElement($favoritePost)) {
+            // set the owning side to null (unless already changed)
+            if ($favoritePost->getPost() === $this) {
+                $favoritePost->setPost(null);
+            }
         }
 
         return $this;

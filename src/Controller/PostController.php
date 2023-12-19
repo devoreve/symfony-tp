@@ -3,12 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\FavoritePost;
 use App\Entity\Post;
 use App\Entity\Tag;
+use App\Entity\User;
 use App\Form\CommentType;
 use App\Form\PostType;
 use App\Repository\CommentRepository;
+use App\Repository\FavoritePostRepository;
 use App\Repository\PostRepository;
+use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -40,6 +44,34 @@ class PostController extends AbstractController
     public function edit(Post $post, Request $request, EntityManagerInterface $manager): Response
     {
         return $this->save($post, $request, $manager);
+    }
+
+    #[Route(path: '/post/{id}/favorite', name: 'app_post_favorite')]
+    public function favorite(Post $post, EntityManagerInterface $manager, FavoritePostRepository $repository): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        $favorite = $repository->findOneBy([
+            'user' => $this->getUser(),
+            'post' => $post
+        ]);
+
+        if ($favorite !== null) {
+            $user->removeFavoritePost($favorite);
+        } else {
+            // Création du favori s'il n'existe pas déjà
+            $favorite = new FavoritePost();
+            $favorite->setPost($post);
+
+            // Ajout du favori à l'utilisateur connecté
+            $user->addFavoritePost($favorite);
+        }
+
+        $manager->persist($favorite);
+        $manager->flush();
+
+        return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
     }
 
     /**
