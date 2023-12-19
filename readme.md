@@ -340,7 +340,7 @@ return $this->render('post/show.html.twig', [
 
 L'afficher dans le template twig.
 
-```twig
+```html
 {{ form(form) }}
 ```
 
@@ -392,8 +392,60 @@ Dans les contrôleurs, il est possible de récupérer l'utilisateur connecté à
 
 Dans les templates on peut utiliser le code suivant pour récupérer l'utilisateur :
 
-```twig
+```html
 {% if is_granted('IS_AUTHENTICATED_FULLY') %}
     <p>Email: {{ app.user.email }}</p>
 {% endif %}
 ```
+
+## Session
+
+### Session flash
+
+La session flash est un mécanisme, lié aux sessions, permettant de garder des informations mais seulement pour un affichage (on les affiche une fois puis on les retire de la session).
+
+```php
+// Dans le contrôleur
+public function save(): Response
+{
+    // ...
+    $this->addFlash('notice', "La ressource a bien été ajoutée");
+}
+```
+
+```html
+{% if app.session.flashBag.has('notice') %}
+    <aside class="alert alert-info">
+        {% for message in app.flashes('notice') %}
+            {{ message }}
+        {% endfor %}
+    </aside>
+{% endif %}
+```
+
+## Front
+
+### Webpack encore
+
+### AssetMapper
+
+Composant php permettant de gérer les assets (css, js...).
+Penser à vérifier dans votre console que tout se charge correctement.
+
+#### Installation
+
+Taper la commande suivante pour installer AssetMapper ``` composer require symfony/asset-mapper symfony/asset symfony/twig-pack```
+
+### Stimulus Bundle
+
+Installer StimulusBundle avec la commande suivante ``` composer require symfony/stimulus-bundle```
+
+#### UXAutocomplete
+
+[Documentation](https://symfony.com/bundles/ux-autocomplete/current/index.html)
+
+Une fois que StimulusBundle est installé, on peut mettre en place le composant UXAutocomplete avec la commande ``` composer require symfony/ux-autocomplete``` (lancer les commandes indiquées dans la doc si vous utilisez webpack encore).
+
+##### Mise à jour du formulaire
+
+Une fois que ce composant est installé, on peut rajouter la clé *autocomplete* à true sur nos champs de type select.

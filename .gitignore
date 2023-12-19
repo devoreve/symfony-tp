@@ -21,3 +21,6 @@
 ###< symfony/phpunit-bridge ###
 
 /.idea
+###> symfony/asset-mapper ###
+/public/assets/
+###< symfony/asset-mapper ###
