@@ -47,28 +47,11 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/post/{id}/favorite', name: 'app_post_favorite')]
-    public function favorite(Post $post, EntityManagerInterface $manager, FavoritePostRepository $repository): Response
+    public function favorite(Post $post, EntityManagerInterface $manager, UserRepository $userRepository): Response
     {
         /** @var User $user */
-        $user = $this->getUser();
-
-        $favorite = $repository->findOneBy([
-            'user' => $this->getUser(),
-            'post' => $post
-        ]);
-
-        if ($favorite !== null) {
-            $user->removeFavoritePost($favorite);
-        } else {
-            // Création du favori s'il n'existe pas déjà
-            $favorite = new FavoritePost();
-            $favorite->setPost($post);
-
-            // Ajout du favori à l'utilisateur connecté
-            $user->addFavoritePost($favorite);
-        }
-
-        $manager->persist($favorite);
+        $user = $userRepository->findWithFavorites($this->getUser()->getId());
+        $user->toggleFavorite($post);
         $manager->flush();
 
         return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);

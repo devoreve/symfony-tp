@@ -40,7 +40,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FavoritePost::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FavoritePost::class, cascade: ['persist'], orphanRemoval: true)]
     private Collection $favoritePosts;
 
     public function __construct()
@@ -172,6 +172,50 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         }
 
         return $this;
+    }
+
+    /**
+     * Récupère l'article des favoris s'il existe
+     *
+     * @param Post $post
+     * @return FavoritePost|null
+     */
+    public function getFavoritePost(Post $post): ?FavoritePost
+    {
+        return $this->getFavoritePosts()
+            ->filter(fn (FavoritePost $fp) => $fp->getPost() === $post)
+            ->first() ?: null;
+    }
+
+    /**
+     * Détermine si un article fait partie des favoris
+     *
+     * @param Post $post
+     * @return bool
+     */
+    public function isFavoritePost(Post $post): bool
+    {
+        return $this->getFavoritePost($post) !== null;
+    }
+
+    /**
+     * Ajoute l'article en favori s'il ne l'est pas déjà
+     * et retire l'article s'il est déjà en favori
+     *
+     * @param Post $post
+     * @return $this
+     */
+    public function toggleFavorite(Post $post): User
+    {
+        $favoritePost = $this->getFavoritePost($post);
+
+        if ($favoritePost !== null) {
+            return $this->removeFavoritePost($favoritePost);
+        } else {
+            $favoritePost = new FavoritePost();
+            $favoritePost->setPost($post);
+            return $this->addFavoritePost($favoritePost);
+        }
     }
 
     /**

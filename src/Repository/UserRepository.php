@@ -39,6 +39,23 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $this->getEntityManager()->flush();
     }
 
+    /**
+     * Renvoie les informations de l'utilisateurs connecté et la liste de ses favoris
+     *
+     * @param int $userId
+     * @return User|null
+     */
+    public function findWithFavorites(int $userId): ?User
+    {
+        return $this->createQueryBuilder('u')
+            ->leftJoin('u.favoritePosts', 'favorites')
+            ->addSelect('favorites')
+            ->where('u.id = :userId')
+            ->setParameter('userId', $userId)
+            ->getQuery()
+            ->getSingleResult();
+    }
+
 //    /**
 //     * @return User[] Returns an array of User objects
 //     */
