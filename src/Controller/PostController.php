@@ -118,7 +118,7 @@ class PostController extends AbstractController
             $manager->flush();
 
             // Redirection sur la page qui affiche le détail de l'article et les commentaires
-            return $this->redirectToRoute('app_post_show', ['id' => $id]);
+            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
         }
 
         // Récupération de tous les commentaires de l'article
