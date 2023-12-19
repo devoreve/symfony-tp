@@ -6,11 +6,21 @@
 
 {% block body %}
 <article>
+    {% if app.session.flashBag.has('notice') %}
+        <aside class="alert alert-info">
+            {% for message in app.flashes('notice') %}
+                {{ message }}
+            {% endfor %}
+        </aside>
+    {% endif %}
+
     {% if is_granted('IS_AUTHENTICATED_FULLY') %}
     <nav>
-        {% if app.user.id == post.user.id %}
+{#        Affichage du bouton Modifier si l'on a les droits#}
+        {% if is_granted('POST_EDIT', post) %}
             <a class="btn btn-primary float-end" href="{{ path('app_post_edit', {id: post.id}) }}">Modifier</a>
         {% endif %}
+
         <a href="{{ path('app_post_favorite', {id: post.id}) }}" class="btn btn-primary float-end mx-2">
             {% if app.user.isFavoritePost(post) %}
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill"

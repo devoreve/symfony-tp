@@ -3,14 +3,10 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
-use App\Entity\FavoritePost;
 use App\Entity\Post;
-use App\Entity\Tag;
-use App\Entity\User;
 use App\Form\CommentType;
 use App\Form\PostType;
 use App\Repository\CommentRepository;
-use App\Repository\FavoritePostRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -19,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostController extends AbstractController
 {
@@ -41,6 +38,7 @@ class PostController extends AbstractController
     }
 
     #[Route(path: '/post/{id}/edit', name: 'app_post_edit')]
+    #[IsGranted(attribute: 'POST_EDIT', subject: 'post')]
     public function edit(Post $post, Request $request, EntityManagerInterface $manager): Response
     {
         return $this->save($post, $request, $manager);
@@ -49,10 +47,15 @@ class PostController extends AbstractController
     #[Route(path: '/post/{id}/favorite', name: 'app_post_favorite')]
     public function favorite(Post $post, EntityManagerInterface $manager, UserRepository $userRepository): Response
     {
-        /** @var User $user */
         $user = $userRepository->findWithFavorites($this->getUser()->getId());
         $user->toggleFavorite($post);
         $manager->flush();
+
+        if ($user->getFavoritePost($post) === null) {
+            $this->addFlash('notice', "L'article a bien été retiré des favoris");
+        } else {
+            $this->addFlash('notice', "L'article a bien été ajouté aux favoris");
+        }
 
         return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
     }
@@ -67,11 +70,6 @@ class PostController extends AbstractController
     {
         // Si l'utilisateur n'est pas connecté, on lui interdit l'accès
         $this->denyAccessUnlessGranted('IS_AUTHENTICATED_FULLY');
-
-        // Si l'utilisateur n'est pas l'auteur de l'article
-        if ($post->getId() !== null && $post->getUser() !== $this->getUser()) {
-            throw new AccessDeniedException("Cet article n'est pas le vôtre");
-        }
 
         $form = $this->createForm(PostType::class, $post);
         $form->handleRequest($request);

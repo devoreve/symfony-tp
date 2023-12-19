@@ -42,16 +42,18 @@ class PostType extends AbstractType
                 'label' => 'Catégorie',
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('c')->orderBy('c.name');
-                }
+                },
+                'autocomplete' => true
             ])
             ->add('tags', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Tag::class,
                 'label' => 'Tags',
                 'multiple' => true,
-                'expanded' => true,
-                'by_reference' => false
+                'by_reference' => false,
+                'autocomplete' => true
             ])
+//            ->add('tags', TagAutocompleteField::class)
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter'
             ])
