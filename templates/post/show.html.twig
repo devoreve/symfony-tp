@@ -13,7 +13,12 @@
         {% endif %}
         <header class="border-bottom my-3">
             <h1>{{ post.title }}</h1>
-            <p>{{ post.createdAt|date('d/m/Y H:i') }}</p>
+            <div>
+                {% for tag in post.tags %}
+                    <span class="badge text-bg-success">{{ tag.name }}</span>
+                {% endfor %}
+            </div>
+            <p>Créé le {{ post.createdAt|date('d/m/Y H:i') }} par {{ post.user.name }}</p>
             <p>Catégorie : {{ post.category.name }}</p>
         </header>
         {{ post.content|nl2br }}
