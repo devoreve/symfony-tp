@@ -4,9 +4,12 @@ namespace App\Form;
 
 use App\Entity\Category;
 use App\Entity\Post;
+use App\Entity\Tag;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -40,6 +43,14 @@ class PostType extends AbstractType
                 'query_builder' => function (EntityRepository $er) {
                     return $er->createQueryBuilder('c')->orderBy('c.name');
                 }
+            ])
+            ->add('tags', EntityType::class, [
+                'choice_label' => 'name',
+                'class' => Tag::class,
+                'label' => 'Tags',
+                'multiple' => true,
+                'expanded' => true,
+                'by_reference' => false
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter'

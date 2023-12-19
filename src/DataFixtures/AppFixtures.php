@@ -7,6 +7,7 @@ use App\Entity\Post;
 use App\Factory\CategoryFactory;
 use App\Factory\CommentFactory;
 use App\Factory\PostFactory;
+use App\Factory\TagFactory;
 use App\Factory\UserFactory;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
@@ -49,6 +50,27 @@ class AppFixtures extends Fixture
             return ['name' => $categories[$i - 1]];
         });
 
+        // Tags
+        $tags = [
+            'php',
+            'js',
+            'symfony',
+            'laravel',
+            'react',
+            'dev web',
+            'unity',
+            'c#',
+            'dev jeu',
+            'rock',
+            'métal',
+            'aventure',
+            'rpg',
+            'action'
+        ];
+
+        TagFactory::createMany(count($tags), static function (int $i) use ($tags) {
+            return ['name' => $tags[$i - 1]];
+        });
 
         // Utilisateurs
         UserFactory::createMany(10);

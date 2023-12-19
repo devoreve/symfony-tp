@@ -40,10 +40,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Post::class)]
     private Collection $posts;
 
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: FavoritePost::class, cascade: ['persist'], orphanRemoval: true)]
+    private Collection $favoritePosts;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->posts = new ArrayCollection();
+        $this->favoritePosts = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -164,6 +168,80 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($post->getUser() === $this) {
                 $post->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * Récupère l'article des favoris s'il existe
+     *
+     * @param Post $post
+     * @return FavoritePost|null
+     */
+    public function getFavoritePost(Post $post): ?FavoritePost
+    {
+        return $this->getFavoritePosts()
+            ->filter(fn (FavoritePost $fp) => $fp->getPost() === $post)
+            ->first() ?: null;
+    }
+
+    /**
+     * Détermine si un article fait partie des favoris
+     *
+     * @param Post $post
+     * @return bool
+     */
+    public function isFavoritePost(Post $post): bool
+    {
+        return $this->getFavoritePost($post) !== null;
+    }
+
+    /**
+     * Ajoute l'article en favori s'il ne l'est pas déjà
+     * et retire l'article s'il est déjà en favori
+     *
+     * @param Post $post
+     * @return $this
+     */
+    public function toggleFavorite(Post $post): User
+    {
+        $favoritePost = $this->getFavoritePost($post);
+
+        if ($favoritePost !== null) {
+            return $this->removeFavoritePost($favoritePost);
+        } else {
+            $favoritePost = new FavoritePost();
+            $favoritePost->setPost($post);
+            return $this->addFavoritePost($favoritePost);
+        }
+    }
+
+    /**
+     * @return Collection<int, FavoritePost>
+     */
+    public function getFavoritePosts(): Collection
+    {
+        return $this->favoritePosts;
+    }
+
+    public function addFavoritePost(FavoritePost $favoritePost): static
+    {
+        if (!$this->favoritePosts->contains($favoritePost)) {
+            $this->favoritePosts->add($favoritePost);
+            $favoritePost->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavoritePost(FavoritePost $favoritePost): static
+    {
+        if ($this->favoritePosts->removeElement($favoritePost)) {
+            // set the owning side to null (unless already changed)
+            if ($favoritePost->getUser() === $this) {
+                $favoritePost->setUser(null);
             }
         }
 
