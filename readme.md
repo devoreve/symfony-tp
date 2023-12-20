@@ -423,6 +423,50 @@ public function save(): Response
 {% endif %}
 ```
 
+## Pagination
+
+### Mise en œuvre générale
+
+* Récupérer un certain nombre d'articles (grâce au mot-clé *limit*) au lieu de tous les récupérer
+* Récupérer les articles en fonction de leur position dans la table (grâce au mot-clé *offset*)
+* Récupérer le numéro de la page depuis l'url pour pouvoir modifier l'*offset* dynamiquement
+* Récupérer le nombre d'articles pour déterminer combien on aura de pages
+
+```sql
+SELECT * 
+FROM post
+LIMIT 10 OFFSET 0
+```
+
+En général l'offset est calculé de la manière suivante : (numéro de page - 1) * nombre par pages.
+Pour déterminer le nombre de pages, là encore on effectue un calcul que l'on retrouve un peu dans toutes les mises en œuvre : nombre total / nombre par page et on arrondit ce résultat à l'entier supérieur.
+
+### Mise en œuvre dans Symfony sans bundle
+
+```php
+public function findLatestByPage(int $page = 1, int $postsPerPage = 10): array
+{
+    return $this->createQueryBuilder('p')
+        ->setMaxResults($postsPerPage)
+        ->setFirstResult(($page - 1) * $postsPerPage)
+        ->getQuery()
+        ->getResult()
+        ;
+}
+
+public function totalPosts(): ?int
+{
+    return $this->createQueryBuilder('p')
+        ->select('COUNT(p.id) AS total')
+        ->getQuery()
+        ->getSingleScalarResult();
+}
+```
+
+### Mise en œuvre dans Symfony avec knp paginator
+
+[Documentation bundle](https://github.com/KnpLabs/KnpPaginatorBundle)
+
 ## Front
 
 ### Webpack encore

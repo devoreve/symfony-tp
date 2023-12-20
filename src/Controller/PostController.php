@@ -10,6 +10,7 @@ use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,13 +21,24 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class PostController extends AbstractController
 {
     #[Route(path: '/post', name: 'app_post_index')]
-    public function index(PostRepository $postRepository): Response
+    public function index(PostRepository $postRepository, Request $request, PaginatorInterface $paginator): Response
     {
+        $paginateQuery = $postRepository->latestPostQuery();
+        $page = $request->query->get('page', 1);
+
+        $pagination = $paginator->paginate($paginateQuery, $page, 10);
+
+//        $total = $postRepository->totalPosts();
+//        $pages = (int)(ceil($total / 10));
+
         // Récupération de la liste des articles triés du plus récent au plus ancien
-        $posts = $postRepository->findLatest();
+//        $posts = $postRepository->findLatest();
+
+        // Récupération des résultats paginés
+//        $posts = $postRepository->findLatestByPage($page);
 
         return $this->render('post/index.html.twig', [
-            'posts' => $posts
+            'posts' => $pagination,
         ]);
     }
 

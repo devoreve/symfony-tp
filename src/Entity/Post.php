@@ -42,6 +42,9 @@ class Post
     #[ORM\OneToMany(mappedBy: 'post', targetEntity: FavoritePost::class, orphanRemoval: true)]
     private Collection $favoritePosts;
 
+    #[ORM\Column]
+    private ?bool $featured = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -198,6 +201,18 @@ class Post
                 $favoritePost->setPost(null);
             }
         }
+
+        return $this;
+    }
+
+    public function isFeatured(): ?bool
+    {
+        return $this->featured;
+    }
+
+    public function setFeatured(bool $featured): static
+    {
+        $this->featured = $featured;
 
         return $this;
     }
