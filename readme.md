@@ -546,3 +546,21 @@ Une fois que StimulusBundle est installé, on peut mettre en place le composant 
 ##### Mise à jour du formulaire
 
 Une fois que ce composant est installé, on peut rajouter la clé *autocomplete* à true sur nos champs de type select.
+
+## Interface d'administration avec EasyAdmin
+
+Grâce au bundle EasyAdmin on va pouvoir mettre une interface d'administration (back-office).
+
+### Sécurité
+
+Penser à bien paramétrer l'accès à l'interface d'administration (modifier le fichier *config/packages/security.yaml*).
+
+```yaml
+    access_control:
+         - { path: ^/admin, roles: ROLE_ADMIN }
+```
+
+### Installation
+
+``` composer require easycorp/easyadmin-bundle```
+``` php bin/console make:admin:dashboard```

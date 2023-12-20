@@ -82,7 +82,8 @@ class AppFixtures extends Fixture
         $user = UserFactory::createOne([
             'email' => 'admin@symfoblog.dev',
             'name' => 'admin',
-            'password' => 'adminadmin'
+            'password' => 'adminadmin',
+            'roles' => ['ROLE_ADMIN']
         ]);
 
         // Création des articles de l'adminstrateur

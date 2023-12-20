@@ -35,7 +35,7 @@ class PostVoter extends Voter
         }
 
         // Si l'utilisateur est un super admin il a le droit de réaliser toutes les actions
-        if ($this->security->isGranted('ROLE_SUPER_ADMIN')) {
+        if ($this->security->isGranted('ROLE_ADMIN')) {
             return true;
         }
 
