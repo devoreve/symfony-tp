@@ -37,6 +37,14 @@
                 Ajouter aux favoris
             {% endif %}
         </a>
+
+        {% if nextPost %}
+            <a class="btn btn-info" href="{{ path('app_post_show', {slug: nextPost.slug}) }}">Article suivant</a>
+        {% endif %}
+
+        {% if previousPost %}
+            <a class="btn btn-info" href="{{ path('app_post_show', {slug: previousPost.slug}) }}">Article précédent</a>
+        {% endif %}
     </nav>
     {% endif %}
     <header class="border-bottom my-3">

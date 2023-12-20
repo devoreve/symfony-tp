@@ -81,6 +81,38 @@ class PostRepository extends ServiceEntityRepository
             ->getSingleScalarResult();
     }
 
+    /**
+     * @param Post $post
+     * @return Post|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findNextPost(Post $post): ?Post
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.createdAt > :createdAt')
+            ->orderBy('p.createdAt', 'ASC')
+            ->setParameter('createdAt', $post->getCreatedAt())
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Post $post
+     * @return Post|null
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function findPreviousPost(Post $post): ?Post
+    {
+        return $this->createQueryBuilder('p')
+            ->where('p.createdAt < :createdAt')
+            ->orderBy('p.createdAt', 'DESC')
+            ->setParameter('createdAt', $post->getCreatedAt())
+            ->setMaxResults(1)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
 //    public function findOneBySomeField($value): ?Post
 //    {
 //        return $this->createQueryBuilder('p')

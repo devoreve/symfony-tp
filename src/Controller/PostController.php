@@ -107,6 +107,7 @@ class PostController extends AbstractController
         Post                   $post,
         EntityManagerInterface $manager,
         CommentRepository      $commentRepository,
+        PostRepository         $postRepository,
         Request                $request
     ): Response
     {
@@ -133,11 +134,17 @@ class PostController extends AbstractController
         // Récupération de tous les commentaires de l'article
         $comments = $commentRepository->findOldest($post->getId());
 
+        // Récupération de l'article suivant (créé après celui-là) et le précédent (créé avant celui-là)
+        $nextPost = $postRepository->findNextPost($post);
+        $previousPost = $postRepository->findPreviousPost($post);
+
         // Affichage du détail de l'article et des commentaires
         return $this->render('post/show.html.twig', [
             'post' => $post,
             'comments' => $comments,
-            'form' => $form
+            'form' => $form,
+            'previousPost' => $previousPost,
+            'nextPost' => $nextPost
         ]);
     }
 }

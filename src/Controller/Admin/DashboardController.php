@@ -6,7 +6,6 @@ use App\Entity\Category;
 use App\Entity\Comment;
 use App\Entity\Post;
 use App\Entity\Tag;
-use EasyCorp\Bundle\EasyAdminBundle\Config\Actions;
 use EasyCorp\Bundle\EasyAdminBundle\Config\Dashboard;
 use EasyCorp\Bundle\EasyAdminBundle\Config\MenuItem;
 use EasyCorp\Bundle\EasyAdminBundle\Controller\AbstractDashboardController;
@@ -48,6 +47,6 @@ class DashboardController extends AbstractDashboardController
         yield MenuItem::linkToCrud('Commentaires', 'fas fa-list', Comment::class)
             ->setPermission('ROLE_ADMIN');
         yield MenuItem::linkToCrud('Catégories', 'fas fa-list', Category::class);
-        yield MenuItem::linkToCrud('Tags', 'fas fa-list', Tag::class);
+        yield MenuItem::linkToCrud('Tags', 'fas fa-bookmark', Tag::class);
     }
 }
