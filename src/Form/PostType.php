@@ -55,7 +55,8 @@ class PostType extends AbstractType
                 'autocomplete' => true
             ])
             ->add('featured', CheckboxType::class, [
-                'label' => 'Mis en avant'
+                'label' => 'Mis en avant',
+                'required' => false
             ])
 //            ->add('tags', TagAutocompleteField::class)
             ->add('submit', SubmitType::class, [

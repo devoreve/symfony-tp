@@ -16,7 +16,7 @@
         {{ form_row(form.content) }}
         {{ form_row(form.category) }}
         {{ form_row(form.tags) }}
-        {% if (is_granted('ROLE_SUPER_ADMIN')) %}
+        {% if (is_granted('ROLE_ADMIN')) %}
             {{ form_row(form.featured) }}
         {% endif %}
 

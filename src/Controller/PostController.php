@@ -15,7 +15,6 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class PostController extends AbstractController
@@ -49,14 +48,14 @@ class PostController extends AbstractController
         return $this->save($post, $request, $manager);
     }
 
-    #[Route(path: '/post/{id}/edit', name: 'app_post_edit')]
+    #[Route(path: '/post/{slug}/edit', name: 'app_post_edit')]
     #[IsGranted(attribute: 'POST_EDIT', subject: 'post')]
     public function edit(Post $post, Request $request, EntityManagerInterface $manager): Response
     {
         return $this->save($post, $request, $manager);
     }
 
-    #[Route(path: '/post/{id}/favorite', name: 'app_post_favorite')]
+    #[Route(path: '/post/{slug}/favorite', name: 'app_post_favorite')]
     public function favorite(Post $post, EntityManagerInterface $manager, UserRepository $userRepository): Response
     {
         $user = $userRepository->findWithFavorites($this->getUser()->getId());
@@ -69,7 +68,7 @@ class PostController extends AbstractController
             $this->addFlash('notice', "L'article a bien été ajouté aux favoris");
         }
 
-        return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
+        return $this->redirectToRoute('app_post_show', ['slug' => $post->getSlug()]);
     }
 
     /**
@@ -94,7 +93,7 @@ class PostController extends AbstractController
             $manager->persist($post);
             $manager->flush();
 
-            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
+            return $this->redirectToRoute('app_post_show', ['slug' => $post->getSlug()]);
         }
 
         return $this->render('post/create.html.twig', [
@@ -103,7 +102,7 @@ class PostController extends AbstractController
         ]);
     }
 
-    #[Route(path: '/post/{id}', name: 'app_post_show')]
+    #[Route(path: '/post/{slug}', name: 'app_post_show')]
     public function show(
         Post                   $post,
         EntityManagerInterface $manager,
@@ -128,7 +127,7 @@ class PostController extends AbstractController
             $manager->flush();
 
             // Redirection sur la page qui affiche le détail de l'article et les commentaires
-            return $this->redirectToRoute('app_post_show', ['id' => $post->getId()]);
+            return $this->redirectToRoute('app_post_show', ['slug' => $post->getSlug()]);
         }
 
         // Récupération de tous les commentaires de l'article
