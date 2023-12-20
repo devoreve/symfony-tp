@@ -18,10 +18,10 @@
     <nav>
 {#        Affichage du bouton Modifier si l'on a les droits#}
         {% if is_granted('POST_EDIT', post) %}
-            <a class="btn btn-primary float-end" href="{{ path('app_post_edit', {id: post.id}) }}">Modifier</a>
+            <a class="btn btn-primary float-end" href="{{ path('app_post_edit', {slug: post.slug}) }}">Modifier</a>
         {% endif %}
 
-        <a href="{{ path('app_post_favorite', {id: post.id}) }}" class="btn btn-primary float-end mx-2">
+        <a href="{{ path('app_post_favorite', {slug: post.slug}) }}" class="btn btn-primary float-end mx-2">
             {% if app.user.isFavoritePost(post) %}
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-heart-fill"
                      viewBox="0 0 16 16">

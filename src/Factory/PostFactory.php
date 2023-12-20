@@ -52,6 +52,7 @@ final class PostFactory extends ModelFactory
             'createdAt' => \DateTimeImmutable::createFromMutable(self::faker()->dateTime()),
             'title' => self::faker()->words(4, true),
             'user' => UserFactory::random(),
+            'featured' => false
         ];
     }
 

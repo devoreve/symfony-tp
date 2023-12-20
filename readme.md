@@ -467,6 +467,59 @@ public function totalPosts(): ?int
 
 [Documentation bundle](https://github.com/KnpLabs/KnpPaginatorBundle)
 
+## Slug
+
+Le slug est une chaîne de caractères basée sur le titre dont l'objectif est d'être affichée dans l'url pour des url plus "SEO friendly".
+
+Il est possible de mettre ça en place manuellement, à chaque fois que l'on ajoute/modifie le titre d'un article on peut créer un slug basé sur ce titre.
+Mais on peut également passer par un bundle (*stof doctrine extensions*) qui va gérer ça pour nous.
+
+### Mise en place de la propriété slug
+
+Il faut tout de même créer le champ en base de données. Rajouter une propriété slug (titre, 100 caractères) à l'entité *Post*, cette propriété doit être unique dans la table.
+
+```php
+#[ORM\Column(length: 100, unique: true)]
+private ?string $slug = null;
+```
+
+Créer la migration puis l'exécuter en base de données. Comme le champ est obligatoire, des erreurs risquent de se produire. Dans ce cas on va réinitialiser la base de données :
+``` php bin/console doctrine:database:drop --force```
+``` php bin/console doctrine:database:create```
+``` php bin/console doctrine:migrations:migrate```
+
+### Installation du bundle
+
+``` composer require stof/doctrine-extensions-bundle``` (saisir "yes" pour l'exécution de la recette)
+
+Modifier la configuration du bundle :
+
+```yaml
+stof_doctrine_extensions:
+    default_locale: en_US
+    orm:
+        default:
+            sluggable: true
+```
+
+### Configurer le champ slug sur l'entité
+
+```php
+use Gedmo\Mapping\Annotation\Slug;
+// [...]
+#[ORM\Column(length: 100, unique: true)]
+#[Slug(fields: ['title'])]
+private ?string $slug = null;
+```
+
+### Relancer les fixtures
+
+Relancer les fixtures et regarder en base de données si le slug a bien été modifié.
+
+### Modifier tous les liens
+
+Remplacer tous les liens vers l'id et remplacer par "slug" (aussi bien dans le contrôleur que dans les templates).
+
 ## Front
 
 ### Webpack encore
@@ -493,3 +546,34 @@ Une fois que StimulusBundle est installé, on peut mettre en place le composant 
 ##### Mise à jour du formulaire
 
 Une fois que ce composant est installé, on peut rajouter la clé *autocomplete* à true sur nos champs de type select.
+
+## Interface d'administration avec EasyAdmin
+
+Grâce au bundle EasyAdmin on va pouvoir mettre une interface d'administration (back-office).
+
+### Liens utiles
+
+[Documentation](https://symfony.com/bundles/EasyAdminBundle/current/index.html)
+[SymfonyCast](https://symfonycasts.com/screencast/easyadminbundle)
+
+### Sécurité
+
+Penser à bien paramétrer l'accès à l'interface d'administration (modifier le fichier *config/packages/security.yaml*).
+
+```yaml
+    access_control:
+         - { path: ^/admin, roles: ROLE_ADMIN }
+```
+
+### Installation
+
+``` composer require easycorp/easyadmin-bundle```
+``` php bin/console make:admin:dashboard```
+
+### CRUD controller
+
+Les CRUD controller sont des contrôleurs générés par easyadmin et qui vont gérer les différentes actions que l'on peut faire sur une ressource en particulier.
+
+### Création d'un CRUD controller
+
+``` php bin/console make:admin:crud``` puis choisir l'entité dont on veut le CRUD.
