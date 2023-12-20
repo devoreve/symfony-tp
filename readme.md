@@ -551,6 +551,11 @@ Une fois que ce composant est installé, on peut rajouter la clé *autocomplete*
 
 Grâce au bundle EasyAdmin on va pouvoir mettre une interface d'administration (back-office).
 
+### Liens utiles
+
+[Documentation](https://symfony.com/bundles/EasyAdminBundle/current/index.html)
+[SymfonyCast](https://symfonycasts.com/screencast/easyadminbundle)
+
 ### Sécurité
 
 Penser à bien paramétrer l'accès à l'interface d'administration (modifier le fichier *config/packages/security.yaml*).
@@ -564,3 +569,11 @@ Penser à bien paramétrer l'accès à l'interface d'administration (modifier le
 
 ``` composer require easycorp/easyadmin-bundle```
 ``` php bin/console make:admin:dashboard```
+
+### CRUD controller
+
+Les CRUD controller sont des contrôleurs générés par easyadmin et qui vont gérer les différentes actions que l'on peut faire sur une ressource en particulier.
+
+### Création d'un CRUD controller
+
+``` php bin/console make:admin:crud``` puis choisir l'entité dont on veut le CRUD.
