@@ -8,6 +8,7 @@ use App\Entity\Tag;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -52,6 +53,9 @@ class PostType extends AbstractType
                 'multiple' => true,
                 'by_reference' => false,
                 'autocomplete' => true
+            ])
+            ->add('featured', CheckboxType::class, [
+                'label' => 'Mis en avant'
             ])
 //            ->add('tags', TagAutocompleteField::class)
             ->add('submit', SubmitType::class, [

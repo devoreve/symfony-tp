@@ -16,6 +16,9 @@
         {{ form_row(form.content) }}
         {{ form_row(form.category) }}
         {{ form_row(form.tags) }}
+        {% if (is_granted('ROLE_SUPER_ADMIN')) %}
+            {{ form_row(form.featured) }}
+        {% endif %}
 
         {% if post.id %}
             {{ form_row(form.submit, {label: "Mettre à jour l'article"}) }}

@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Post;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -27,12 +28,57 @@ class PostRepository extends ServiceEntityRepository
     public function findLatest(): array
     {
         return $this->createQueryBuilder('p')
-            ->orderBy('p.createdAt', 'DESC')
+            ->orderBy('p.featured', 'DESC')
+            ->addOrderBy('p.createdAt', 'DESC')
             ->leftJoin('p.tags', 'tag')
             ->addSelect('tag')
             ->getQuery()
             ->getResult()
         ;
+    }
+
+    /**
+     *
+     * @param int $page
+     * @param int $postsPerPage
+     * @return Post[] Returns an array of Post objects
+     */
+    public function findLatestByPage(int $page = 1, int $postsPerPage = 10): array
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.featured', 'DESC')
+            ->addOrderBy('p.createdAt', 'DESC')
+            ->leftJoin('p.tags', 'tag')
+            ->addSelect('tag')
+            ->setMaxResults($postsPerPage)
+            ->setFirstResult(($page - 1) * $postsPerPage)
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
+    public function latestPostQuery(): Query
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.featured', 'DESC')
+            ->addOrderBy('p.createdAt', 'DESC')
+            ->leftJoin('p.tags', 'tag')
+            ->addSelect('tag')
+            ->getQuery();
+    }
+
+    /**
+     * @return int|null
+     * @throws \Doctrine\ORM\NoResultException
+     * @throws \Doctrine\ORM\NonUniqueResultException
+     */
+    public function totalPosts(): ?int
+    {
+        return $this->createQueryBuilder('p')
+            ->select('COUNT(p.id) AS total')
+            ->getQuery()
+            ->getSingleScalarResult();
     }
 
 //    public function findOneBySomeField($value): ?Post
