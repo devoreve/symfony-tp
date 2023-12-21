@@ -63,7 +63,19 @@
         <p>Créé le {{ post.createdAt|date('d/m/Y H:i') }} par {{ post.user.name }}</p>
         <p>Catégorie : {{ post.category.name }}</p>
     </header>
-    {{ post.content|nl2br }}
+    {% if post.premium %}
+        <div>
+            {{ post.content|slice(0, 100)|nl2br }}[...]
+        </div>
+
+        <form class="my-3" method="post" action="{{ path('app_cart_add', {slug: post.slug}) }}">
+            <p class="alert alert-warning">Cet article est premium, il faut payer pour voir la suite</p>
+            <p>Prix : {{ (post.price / 100) |number_format(2, ',', '') }}€</p>
+            <button class="btn btn-success">Ajouter au panier</button>
+        </form>
+    {% else %}
+        {{ post.content|nl2br }}
+    {% endif %}
 </article>
 
 <section>

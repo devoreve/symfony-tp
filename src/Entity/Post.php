@@ -50,12 +50,19 @@ class Post
     #[Slug(fields: ['title'])]
     private ?string $slug = null;
 
+    #[ORM\Column]
+    private ?bool $premium = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $price = null;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->comments = new ArrayCollection();
         $this->tags = new ArrayCollection();
         $this->favoritePosts = new ArrayCollection();
+        $this->premium = false;
     }
 
     public function getId(): ?int
@@ -230,6 +237,30 @@ class Post
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
+
+        return $this;
+    }
+
+    public function isPremium(): ?bool
+    {
+        return $this->premium;
+    }
+
+    public function setPremium(bool $premium): static
+    {
+        $this->premium = $premium;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
+    {
+        return $this->price;
+    }
+
+    public function setPrice(?int $price): static
+    {
+        $this->price = $price;
 
         return $this;
     }

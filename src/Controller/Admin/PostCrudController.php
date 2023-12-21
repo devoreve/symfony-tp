@@ -10,6 +10,7 @@ use EasyCorp\Bundle\EasyAdminBundle\Field\AssociationField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\BooleanField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\DateTimeField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\IdField;
+use EasyCorp\Bundle\EasyAdminBundle\Field\MoneyField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextareaField;
 use EasyCorp\Bundle\EasyAdminBundle\Field\TextField;
 
@@ -34,12 +35,16 @@ class PostCrudController extends AbstractCrudController
             IdField::new('id')->hideOnForm(),
             TextField::new('title'),
             TextareaField::new('content'),
+            BooleanField::new('premium'),
+            MoneyField::new('price')
+                ->setCurrency('EUR')
+                ->setStoredAsCents(),
+            BooleanField::new('featured'),
             DateTimeField::new('createdAt')->hideOnForm(),
             AssociationField::new('category')->autocomplete(),
             AssociationField::new('tags')
                 ->autocomplete()
                 ->setFormTypeOption('by_reference', false),
-            BooleanField::new('featured')
         ];
     }
 }
