@@ -1,5 +1,9 @@
 # Mettre en place une fonctionnalité e-commerce
 
+## Liens utiles
+
+[MoneyField](https://symfony.com/bundles/EasyAdminBundle/current/fields/MoneyField.html)
+
 ## Description
 
 On va rendre certains articles premium et qui devront donc être achetés par les utilisateurs.
