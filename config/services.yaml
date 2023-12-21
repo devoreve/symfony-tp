@@ -7,7 +7,7 @@ parameters:
 
 services:
     App\Service\Cart\CartInterface:
-        class: App\Service\Cart\CartDatabase
+        class: App\Service\Cart\CartSession
 
     # default configuration for services in *this* file
     _defaults:

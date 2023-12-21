@@ -7,5 +7,5 @@ interface CartInterface
     public function remove(int $key): void;
     public function clear(): void;
     public function getItems(): array;
-    public function get(int $key): array;
+    public function get(int $key): ?array;
 }

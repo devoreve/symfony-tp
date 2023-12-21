@@ -39,13 +39,13 @@ Un système de panier simple (sans quantité, juste les articles que l'on souhai
 * En session
 * En localstorage (js)
 
-#### Ajout au panier dans la session
+### Ajout au panier dans la session
 
 * Création d'une interface CartInterface
 * Création d'une classe CartSession
 * Création du contrôleur pour ajouter/retirer/afficher les articles du panier
 
-##### Création de la classe CartSession
+### Création de la classe CartSession
 
 La classe est constituée de la session et d'un tableau *items*. Ce tableau ressemble à quelque chose comme ça :
 
@@ -71,3 +71,31 @@ Créer la classe *CartSession* qui implémente l'interface *CartInterface* :
 * La méthode *get* permet de récupérer un élément particulier du panier
 
 Lorsque vous modifiez le tableau *items*, il faut mettre à jour la session.
+
+### 1. Page panier
+
+Créer une nouvelle page "Panier" (lien à mettre dans la navigation). 
+Lorsque l'on va sur cette page-là, on affiche dans un tableau html tous les articles (titre, catégorie, auteur, prix en euros) ajoutés au panier.
+Créer un bouton après chaque ligne avec l'article "Retirer l'article du panier".
+En-dessous du tableau, afficher le prix total du panier.
+
+En bas de la page, créer 2 boutons : "Vider le panier" et "Valider la commande".
+
+### 2. Page article
+
+Modifier la page de détail d'un article. Lorsque l'article a déjà ajouté au panier, afficher "Retirer du panier". Lorsque l'article n'est pas encore dans le panier, afficher "Ajouter au panier".
+
+### 3. Création de l'entité commande
+
+Créer une nouvelle entité *Order* qui contiendra les informations suivantes :
+* total
+* user
+* status
+* createdAt
+
+Mettre en place la relation avec les utilisateurs.
+Mettre en place la relation entre les articles et les commandes.
+
+### 4. Validation du panier
+
+Lorsque l'on valide le panier, créer une nouvelle commande qui mettre à jour les champs de la commande et qui va créer des données dans la table intermédiaire (*order_post*). Enfin on supprime le contenu du panier.

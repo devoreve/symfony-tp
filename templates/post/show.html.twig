@@ -68,10 +68,10 @@
             {{ post.content|slice(0, 100)|nl2br }}[...]
         </div>
 
-        <form class="my-3" method="post" action="">
+        <form class="my-3" method="post" action="{{ path('app_cart_add', {slug: post.slug}) }}">
             <p class="alert alert-warning">Cet article est premium, il faut payer pour voir la suite</p>
             <p>Prix : {{ (post.price / 100) |number_format(2, ',', '') }}€</p>
-            <button class="btn btn-primary">Ajouter au panier</button>
+            <button class="btn btn-success">Ajouter au panier</button>
         </form>
     {% else %}
         {{ post.content|nl2br }}
