@@ -30,4 +30,5 @@ Un système de panier simple (sans quantité, juste les articles que l'on souhai
 * Ajouter un champ *price* (qui n'est pas obligatoire) de type integer
 * Depuis l'interface d'administration, ajouter l'affichage de ce champ (MoneyField en euros et stocké en centime)
 * Sur les articles premium, ajouter quelques prix (si vous mettez le prix 40 vérifier en base de données que le prix s'affiche avec la valeur 4000)
-
+* Ajouter le champ price sur le front-office
+* Ajouter les événements PRE_SET_DATA et PRE_SUBMIT pour gérer l'enregistrement et l'affichage du prix

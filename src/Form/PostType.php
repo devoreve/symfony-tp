@@ -8,13 +8,14 @@ use App\Entity\Tag;
 use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSetDataEvent;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Length;
@@ -46,6 +47,13 @@ class PostType extends AbstractType
                 },
                 'autocomplete' => true
             ])
+            ->add('premium', CheckboxType::class, [
+                'label' => 'Premium',
+                'required' => false
+            ])
+            ->add('price', NumberType::class, [
+                'label' => 'Prix'
+            ])
             ->add('tags', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Tag::class,
@@ -62,6 +70,21 @@ class PostType extends AbstractType
             ->add('submit', SubmitType::class, [
                 'label' => 'Ajouter'
             ])
+            ->addEventListener(FormEvents::PRE_SET_DATA, function (PreSetDataEvent $event) {
+                /** @var Post $post */
+                $post = $event->getData();
+
+                // Conversion du prix en euros
+                $price = $post->getPrice() / 100;
+
+                // Mise à jour de l'entité et des données
+                $post->setPrice($price);
+                $event->setData($post);
+            })
+            /* TODO
+             *
+             * Rajouter l'événement PRE_SUBMIT et modifier le prix qui a été envoyé (* 100)
+             */
         ;
     }
 
