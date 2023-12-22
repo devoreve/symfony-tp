@@ -47,6 +47,9 @@
                                 <a class="nav-link" href="{{ path('app_register') }}">Inscription</a>
                             </li>
                         {% endif %}
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ path('app_cart_index') }}">Panier</a>
+                        </li>
 
                         {% if is_granted('ROLE_ADMIN') %}
                             <li class="nav-item">

@@ -56,6 +56,9 @@ class Post
     #[ORM\Column(nullable: true)]
     private ?int $price = null;
 
+    #[ORM\ManyToMany(targetEntity: Order::class, mappedBy: 'posts')]
+    private Collection $orders;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -63,6 +66,7 @@ class Post
         $this->tags = new ArrayCollection();
         $this->favoritePosts = new ArrayCollection();
         $this->premium = false;
+        $this->orders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -261,6 +265,33 @@ class Post
     public function setPrice(?int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Order>
+     */
+    public function getOrders(): Collection
+    {
+        return $this->orders;
+    }
+
+    public function addOrder(Order $order): static
+    {
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+            $order->addPost($this);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): static
+    {
+        if ($this->orders->removeElement($order)) {
+            $order->removePost($this);
+        }
 
         return $this;
     }
