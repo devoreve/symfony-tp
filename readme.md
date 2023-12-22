@@ -577,3 +577,38 @@ Les CRUD controller sont des contrôleurs générés par easyadmin et qui vont g
 ### Création d'un CRUD controller
 
 ``` php bin/console make:admin:crud``` puis choisir l'entité dont on veut le CRUD.
+
+## Session
+
+## Stripe
+
+[Site stripe](https://stripe.com/fr)
+[Documentation](https://stripe.com/docs)
+[Doc formulaire intégré](https://stripe.com/docs/checkout/embedded/quickstart)
+
+### Création du compte
+
+Commencer par se créer un compte sur la plateforme Stripe. Une fois que le compte est créé, vous avez accès à un dashboard avec la liste des paiements et vos clés pour utiliser Stripe.
+
+### Installer Stripe php
+
+Lancer la commande ``` composer require stripe/stripe-php``` pour installer stripe-php.
+
+### Configuration
+
+Ajouter dans votre fichier *.env* votre clé secrète stripe. Attention ce fichier ne doit pas être versionné.
+
+```
+STRIPE_SECRET_KEY=giomfjhbvufhuihfnbbnjkv
+```
+
+### Processus
+
+1. Créer une page checkout qui va envoyer une requête vers Stripe pour afficher le formulaire de paiement
+  * Créer un objet *StripeClient* en renseignant votre clé secrète
+  * Indiquer les informations de la commande (prix, quantité) - Attention il faut créer des objet Product et Price avec la bibliothèque Stripe
+  * Renvoyer ces informations + une url sur laquelle les résultats (statut du paiement) seront envoyés
+2. Renseigner sur le formulaire les informations de paiement puis valider
+3. Vous arrivez sur l'url renseignée lors du checkout (étape 1)
+4. Créer une page web et un fichier js qui enverra une requête vers Stripe avec le numéro de la session pour récupérer le statut du paiement
+5. Gérer les différents (paiement réussi, échec du paiement etc.)

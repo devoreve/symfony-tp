@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block javascripts %}
+    <script src="https://js.stripe.com/v3/"></script>
+    <script src="{{ asset('assets/checkout.js') }}" defer></script>
+{% endblock %}
+
+{% block title %}
+    Paiement de la commande
+{% endblock %}
+
+{% block body %}
+    <h1>Paiement de la commande</h1>
+
+    <div id="checkout">
+        <!-- Checkout will insert the payment form here -->
+    </div>
+{% endblock %}
