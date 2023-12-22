@@ -32,7 +32,16 @@ class CartController extends AbstractController
     public function add(Post $post, CartInterface $cart): Response
     {
         if ($post->isPremium()) {
-            $cart->add($post->getId(), ['quantity' => 1, 'id' => $post->getId()]);
+            // Est-ce que l'article est dans le panier
+            $isInCart = $cart->get($post->getId()) !== null;
+
+            // Retrait du panier si l'article est déjà ajouté
+            // Sinon on l'ajoute au panier
+            if ($isInCart) {
+                $cart->remove($post->getId());
+            } else {
+                $cart->add($post->getId(), ['quantity' => 1, 'id' => $post->getId()]);
+            }
         }
 
         return $this->redirectToRoute('app_post_show', ['slug' => $post->getSlug()]);

@@ -33,4 +33,9 @@
             </tr>
         </tfoot>
     </table>
+
+    <form action="{{ path('app_order_validate') }}" method="post">
+        <button type="button" class="btn btn-danger">Vider le panier</button>
+        <button class="btn btn-success">Valider la commande</button>
+    </form>
 {% endblock %}

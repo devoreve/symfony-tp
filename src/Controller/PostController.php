@@ -9,6 +9,7 @@ use App\Form\PostType;
 use App\Repository\CommentRepository;
 use App\Repository\PostRepository;
 use App\Repository\UserRepository;
+use App\Service\Cart\CartInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -108,7 +109,8 @@ class PostController extends AbstractController
         EntityManagerInterface $manager,
         CommentRepository      $commentRepository,
         PostRepository         $postRepository,
-        Request                $request
+        Request                $request,
+        CartInterface          $cart
     ): Response
     {
         // Création d'un commentaire vide
@@ -138,13 +140,17 @@ class PostController extends AbstractController
         $nextPost = $postRepository->findNextPost($post);
         $previousPost = $postRepository->findPreviousPost($post);
 
+        // Est-ce que l'article a été rajouté au panier ?
+        $isInCart = $cart->get($post->getId()) !== null;
+
         // Affichage du détail de l'article et des commentaires
         return $this->render('post/show.html.twig', [
             'post' => $post,
             'comments' => $comments,
             'form' => $form,
             'previousPost' => $previousPost,
-            'nextPost' => $nextPost
+            'nextPost' => $nextPost,
+            'isInCart' => $isInCart
         ]);
     }
 }
